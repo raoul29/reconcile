@@ -27,3 +27,8 @@ find . -name 'ecs*' | xargs grep 'Rated Event Publisher Trace Log'  | sed 's!^.*
 echo
 echo "Start timestamp of log files: "
 find . -type f | grep -v GC | grep -v DIAG | sort | xargs  grep -m1 -- '^2023' | awk -F ':' '{print $2 $3 $3, $1}'
+
+
+echo
+echo "Error message per log file: "
+find . -type f -name '*log*' |sort | xargs grep ERROR | awk -F ':' '{print $1}'  | uniq -c | awk '{printf "%-50s %30d \n", $2, $1}'

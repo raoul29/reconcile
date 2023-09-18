@@ -1,0 +1,29 @@
+C1=$(find . -name 'ecs*' | xargs grep 'Rated Event Trace Log'  | wc -l)
+printf "Rated Event Trace Log                  :   %20d \n" $C1
+
+C2=$(find . -name 'ecs*' | xargs grep 'Rated Event Publisher Trace Log'  | wc -l)
+printf "Rated Event Publisher Trace Log        :   %20d \n" $C2
+
+echo
+
+C3=$(find . -name 'ratedEvent*' | xargs grep INFO | grep SUCCESS | grep loaded | sed 's!^.*events\[!!' | sed 's!].*$!!' | awk '{s+=$1} END {print s}')
+printf "Rated Event Manager Loaded             :   %20d \n" $C3 
+
+C4=$(find . -name 'ratedEvent*' | xargs grep INFO | grep SUCCESS | grep updated | sed 's!^.*events\[!!' | sed 's!].*$!!' | awk '{s+=$1} END {print s}')
+printf "Rated Event Manager Updated            :   %20d \n" $C4 
+
+C5=$(find . -name 'ratedEvent*' | xargs grep INFO | grep FAILURE | grep updated | sed 's!^.*events\[!!' | sed 's!].*$!!' | awk '{s+=$1} END {print s}')
+printf "Rated Event Manager Failures           :   %20d \n" $C5 
+
+echo
+
+C6=$(find . -name 'ecs*' | xargs grep 'Rated Event Publisher Trace Log' | grep DGW | wc -l)
+printf "DGW rated events                       :   %20d \n" $C6 
+
+echo
+echo "Potential duplicate session IDs: "
+find . -name 'ecs*' | xargs grep 'Rated Event Publisher Trace Log'  | sed 's!^.*SessionId=!!' | sort | uniq -d 
+
+echo
+echo "Start timestamp of log files: "
+find . -type f | grep -v GC | grep -v DIAG | sort | xargs  grep -m1 -- '^2023' | awk -F ':' '{print $2 $3 $3, $1}'
